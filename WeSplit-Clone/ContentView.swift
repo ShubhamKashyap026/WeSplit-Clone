@@ -30,7 +30,6 @@ struct ContentView: View {
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
     @FocusState private var billAmountIsFocused: Bool
-    let tipPercentageOptions = [10, 15, 20, 50, 100, 0]
     
     var finalOutputValues: (grandTotal: String, amountPerPerson: String) {
         let peopleCount = Double(numberOfPeople + 2) // I am doing this because the foreach loop starts 0 index item and our foreach loop starts at 2..<20 - 2 so the 2 item on index will 4 but number of people in computed property will 2. So adding this to offset and correct the value
@@ -68,11 +67,11 @@ struct ContentView: View {
                 // Tip Logic
                 Section("Tip percentage") {
                     Picker("Select tip", selection: $tipPercentage) {
-                        ForEach(tipPercentageOptions, id: \.self) { num in
+                        ForEach(0..<101) { num in
                             Text("\(num)%")
                         }
                     }
-                    .pickerStyle(.segmented)
+                    .pickerStyle(.navigationLink)
                 }
                 
                 // Final output
