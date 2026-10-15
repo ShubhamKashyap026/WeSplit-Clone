@@ -28,51 +28,69 @@ struct ContentView: View {
     @State private var checkAmount = 0.0
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
+    @FocusState private var billAmountIsFocused: Bool
     let tipPercentageOptions = [10, 15, 20, 50, 100, 0]
     
-    var finalOutputValues: (grandTotalAmountValue: String, amountPerPersonValue: String) {
+    var finalOutputValues: (grandTotal: String, amountPerPerson: String) {
+        let peopleCount = Double(numberOfPeople + 2) // I am doing this because the foreach loop starts 0 index item and our foreach loop starts at 2..<20 - 2 so the 2 item on index will 4 but number of people in computed property will 2. So adding this to offset and correct the value
+        
         let grandTotalAmountValue = checkAmount + ((Double(tipPercentage) / 100) * checkAmount)
-        let amountPerPersonValue = grandTotalAmountValue / Double(numberOfPeople)
+        let amountPerPersonValue = grandTotalAmountValue / peopleCount
         
         
         return (grandTotalAmountValue.limitToTwoDecimal(), amountPerPersonValue.limitToTwoDecimal())
     }
     
     var body: some View {
-        Form {
+        
+        NavigationStack {
             
-            // Bill amount
-            Section("Bill amount") {
-                TextField("Enter you amount", value: $checkAmount, format: .currency(code: Locale.current.currency?.identifier ?? "INR"))
-                    .keyboardType(.decimalPad)
+            // Form
+            Form {
+                
+                // Bill amount & Number of people
+                Section("Bill amount") {
+                    TextField("Enter you amount", value: $checkAmount, format: .currency(code: Locale.current.currency?.identifier ?? "INR"))
+                        .keyboardType(.decimalPad)
+                        .focused($billAmountIsFocused)
+                    
+                    
+                    Picker("Number of people", selection: $numberOfPeople) {
+                        ForEach(2..<20) { num in
+                            Text("\(num)")
+                        }
+                    }
+                    .pickerStyle(.automatic)
+                }
+                
+                
+                // Tip Logic
+                Section("Tip percentage") {
+                    Picker("Select tip", selection: $tipPercentage) {
+                        ForEach(tipPercentageOptions, id: \.self) { num in
+                            Text("\(num)%")
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
+                // Final output
+                Section {
+                    Text("Grand total amount is: \(finalOutputValues.grandTotal)")
+                    Text("Amount per person is: \(finalOutputValues.amountPerPerson)")
+                }
+                
             }
             
-            // Number of people
-            Section("Number of people") {
-                Picker("Pick number", selection: $numberOfPeople) {
-                    ForEach(2..<20) { num in
-                        Text("\(num)")
+            .navigationTitle("We split clone")
+            .toolbar {
+                if billAmountIsFocused  {
+                    Button("Done") {
+                        billAmountIsFocused = false
                     }
                 }
             }
-            
-            // Tip Logic
-            Section("Tip percentage") {
-                Picker("Select tip", selection: $tipPercentage) {
-                    ForEach(tipPercentageOptions, id: \.self) { num in
-                        Text("\(num)")
-                    }
-                }
-                .pickerStyle(.segmented)
 
-            }
-            
-            // Final output
-            Section {
-                Text("Grand total amount is: \(finalOutputValues.grandTotalAmountValue)")
-                Text("Amount per person is: \(finalOutputValues.amountPerPersonValue)")
-            }
-            
         }
     }
 }
