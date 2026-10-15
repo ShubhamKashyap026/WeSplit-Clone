@@ -76,7 +76,7 @@ struct ContentView: View {
                 }
                 
                 // Final output
-                Section {
+                Section("Final output") {
                     Text("Grand total amount is: \(finalOutputValues.grandTotal)")
                     Text("Amount per person is: \(finalOutputValues.amountPerPerson)")
                 }
