@@ -25,6 +25,7 @@ extension Double {
 
 struct ContentView: View {
     // Properties
+    // Whenever an @State property changes, Swift re-invokes our body property
     @State private var checkAmount = 0.0
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
